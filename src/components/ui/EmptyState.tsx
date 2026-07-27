@@ -3,16 +3,25 @@ import React from 'react';
 export interface EmptyStateProps {
   title: string;
   description: string;
-  icon?: React.ReactNode;
+  icon?: React.ReactNode | React.ElementType;
   action?: React.ReactNode;
   className?: string;
 }
 
 export function EmptyState({ title, description, icon, action, className = '' }: EmptyStateProps) {
+  const renderIcon = () => {
+    if (!icon) return null;
+    if (typeof icon === 'function' || (typeof icon === 'object' && icon !== null && 'render' in (icon as any))) {
+      const IconComponent = icon as React.ElementType;
+      return <IconComponent className="w-10 h-10 text-text-secondary" />;
+    }
+    return icon as React.ReactNode;
+  };
+
   return (
     <div className={`flex flex-col items-center justify-center text-center p-8 bg-card border border-dashed border-border rounded-xl ${className}`}>
       {icon ? (
-        <div className="text-text-secondary/50 mb-4">{icon}</div>
+        <div className="text-text-secondary/50 mb-4">{renderIcon()}</div>
       ) : (
         <div className="w-16 h-16 rounded-full bg-surface flex items-center justify-center text-text-secondary mb-4">
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">

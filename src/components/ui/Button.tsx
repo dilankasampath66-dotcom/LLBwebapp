@@ -4,7 +4,7 @@ import React, { ButtonHTMLAttributes, forwardRef } from 'react';
 import { motion } from 'framer-motion';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   fullWidth?: boolean;
@@ -30,11 +30,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-light disabled:opacity-50 disabled:pointer-events-none';
     
-    const variants = {
+    const variants: Record<string, string> = {
       primary: 'bg-primary text-white hover:bg-primary-light',
       secondary: 'border border-border bg-surface text-text hover:bg-border',
       ghost: 'bg-transparent text-text hover:bg-surface',
       danger: 'bg-error text-white hover:bg-error/80',
+      outline: 'border border-border bg-transparent text-text hover:bg-surface',
     };
 
     const sizes = {
