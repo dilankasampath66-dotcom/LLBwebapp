@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { UserPlus, ClipboardCheck, Library, Trash2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/Skeleton';
+import Skeleton from '@/components/ui/Skeleton';
 
 interface Counts {
   pendingTutors: number;

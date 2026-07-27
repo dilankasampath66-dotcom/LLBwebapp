@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, Mail, Phone, Calendar } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Avatar } from '@/components/ui/Avatar';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { Skeleton } from '@/components/ui/Skeleton';
+import Card from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Avatar from '@/components/ui/Avatar';
+import EmptyState from '@/components/ui/EmptyState';
+import Skeleton from '@/components/ui/Skeleton';
 import { useToast } from '@/hooks/useToast';
 import { formatRelativeDate } from '@/lib/utils';
 

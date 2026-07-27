@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { formatRelativeDate } from '@/lib/utils';
-import { Badge } from '@/components/ui/Badge';
+import Badge from '@/components/ui/Badge';
 import { Scale } from 'lucide-react';
 
 interface JudgementCardProps {

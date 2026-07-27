@@ -3,8 +3,8 @@
 import { Control, useFieldArray, FieldErrors } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 
 interface DocumentUrlListProps {
   control: Control<any>;

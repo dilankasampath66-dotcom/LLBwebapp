@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Dropdown } from '@/components/ui/Dropdown';
-import { Avatar } from '@/components/ui/Avatar';
-import { Badge } from '@/components/ui/Badge';
+import Dropdown from '@/components/ui/Dropdown';
+import Avatar from '@/components/ui/Avatar';
+import Badge from '@/components/ui/Badge';
 import { signOut } from 'next-auth/react';
 
 interface User {

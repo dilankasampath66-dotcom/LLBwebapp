@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, X } from 'lucide-react';
-import { Chip } from '@/components/ui/Chip';
-import { Select } from '@/components/ui/Select';
-import { Input } from '@/components/ui/Input';
+import Chip from '@/components/ui/Chip';
+import Select from '@/components/ui/Select';
+import Input from '@/components/ui/Input';
 import { useDebounce } from '@/hooks/useDebounce';
 
 interface Subject {

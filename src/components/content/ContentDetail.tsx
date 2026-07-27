@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowLeft, FileText, Calendar, User } from 'lucide-react';
-import { Badge } from '@/components/ui/Badge';
+import Badge from '@/components/ui/Badge';
 import { getYouTubeEmbedUrl, formatRelativeDate } from '@/lib/utils';
 
 interface ContentDetailProps {

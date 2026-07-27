@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/Badge';
+import Badge from '@/components/ui/Badge';
 
 export interface SidebarItem {
   href: string;

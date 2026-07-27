@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { getYouTubeThumbnail, formatRelativeDate } from '@/lib/utils';
-import { Badge } from '@/components/ui/Badge';
+import Badge from '@/components/ui/Badge';
 import { Play } from 'lucide-react';
 
 interface ContentCardProps {
