@@ -1,7 +1,7 @@
 import { auth } from './auth';
 import { NextResponse } from 'next/server';
 
-export type Role = 'USER' | 'TUTOR' | 'ADMIN' | 'SUPER_ADMIN';
+export type Role = 'STUDENT' | 'TUTOR' | 'ADMIN' | 'SUPER_ADMIN';
 export type TutorStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export const getServerSession = async () => {

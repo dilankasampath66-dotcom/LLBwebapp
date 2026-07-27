@@ -56,13 +56,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             : { phone: String(credentials.identifier) }
         });
 
-        if (!user || !user.password) {
+        if (!user || !user.passwordHash) {
           throw new Error('Invalid credentials');
         }
 
         const isPasswordValid = await bcrypt.compare(
           String(credentials.password),
-          user.password
+          user.passwordHash
         );
 
         if (!isPasswordValid) {

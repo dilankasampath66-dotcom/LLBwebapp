@@ -27,7 +27,7 @@ export default function SignupPage() {
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      name: '',
+      fullName: '',
       email: '',
       phone: '',
       studyYear: 3,
@@ -115,8 +115,8 @@ export default function SignupPage() {
           label="Full Name"
           type="text"
           placeholder="John Doe"
-          error={errors.name?.message}
-          {...register('name')}
+          error={errors.fullName?.message}
+          {...register('fullName')}
         />
 
         <Input

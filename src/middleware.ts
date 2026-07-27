@@ -15,7 +15,7 @@ export default auth((req) => {
 
   if (isPublicRoute) {
     if (isLoggedIn) {
-      return NextResponse.redirect(new URL('/dashboard', nextUrl));
+      return NextResponse.redirect(new URL('/content', nextUrl));
     }
     return NextResponse.next();
   }
@@ -34,19 +34,19 @@ export default auth((req) => {
 
   if (path.startsWith('/tutor')) {
     if (user?.role !== 'TUTOR' || user?.tutorStatus !== 'APPROVED') {
-      return NextResponse.redirect(new URL('/dashboard', nextUrl));
+      return NextResponse.redirect(new URL('/content', nextUrl));
     }
   }
 
   if (path.startsWith('/admin')) {
     if (user?.role !== 'ADMIN' && user?.role !== 'SUPER_ADMIN') {
-      return NextResponse.redirect(new URL('/dashboard', nextUrl));
+      return NextResponse.redirect(new URL('/content', nextUrl));
     }
   }
 
   if (path.startsWith('/superadmin')) {
     if (user?.role !== 'SUPER_ADMIN') {
-      return NextResponse.redirect(new URL('/dashboard', nextUrl));
+      return NextResponse.redirect(new URL('/content', nextUrl));
     }
   }
 
