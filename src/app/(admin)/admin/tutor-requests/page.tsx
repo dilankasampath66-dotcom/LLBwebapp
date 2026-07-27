@@ -105,7 +105,7 @@ export default function TutorRequestsPage() {
 
       {requests.length === 0 ? (
         <EmptyState
-          icon={CheckCircle2}
+          icon={<CheckCircle2 className="w-12 h-12 text-zinc-500" />}
           title="All caught up"
           description="No pending tutor applications at the moment."
         />
