@@ -52,6 +52,7 @@ export default function JudgementsPage() {
     setNextCursor(data.nextCursor);
   };
 
+  // @ts-ignore
   const observerTarget = useInfiniteScroll(loadMore, !!nextCursor && !loading);
 
   return (

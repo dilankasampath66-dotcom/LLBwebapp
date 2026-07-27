@@ -64,6 +64,7 @@ export default function ContentPage() {
     setNextCursor(data.nextCursor);
   };
 
+  // @ts-ignore
   const observerTarget = useInfiniteScroll(loadMore, !!nextCursor && !loading);
 
   return (
