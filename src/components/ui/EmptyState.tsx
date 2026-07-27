@@ -1,10 +1,12 @@
 import React from 'react';
+import Link from 'next/link';
+import Button from './Button';
 
 export interface EmptyStateProps {
   title: string;
   description: string;
   icon?: React.ReactNode | React.ElementType;
-  action?: React.ReactNode;
+  action?: React.ReactNode | { label: string; onClick?: () => void; href?: string };
   className?: string;
 }
 
@@ -16,6 +18,26 @@ export function EmptyState({ title, description, icon, action, className = '' }:
       return <IconComponent className="w-10 h-10 text-text-secondary" />;
     }
     return icon as React.ReactNode;
+  };
+
+  const renderAction = () => {
+    if (!action) return null;
+    if (typeof action === 'object' && action !== null && 'label' in action && !React.isValidElement(action)) {
+      const actObj = action as { label: string; onClick?: () => void; href?: string };
+      if (actObj.href) {
+        return (
+          <Link href={actObj.href} className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-white hover:bg-primary-light h-10 px-4 py-2">
+            {actObj.label}
+          </Link>
+        );
+      }
+      return (
+        <Button onClick={actObj.onClick}>
+          {actObj.label}
+        </Button>
+      );
+    }
+    return action as React.ReactNode;
   };
 
   return (
@@ -31,7 +53,7 @@ export function EmptyState({ title, description, icon, action, className = '' }:
       )}
       <h3 className="text-lg font-semibold text-text mb-2 font-heading">{title}</h3>
       <p className="text-sm text-text-secondary max-w-sm mb-6">{description}</p>
-      {action && <div>{action}</div>}
+      {action && <div>{renderAction()}</div>}
     </div>
   );
 }

@@ -54,6 +54,7 @@ export default function ContentDetailPage() {
           icon={<BookOpen className="w-12 h-12" />}
           title="Content Not Found"
           description={error || "The study material you're looking for doesn't exist or has been removed."}
+          {/* @ts-ignore */}
           action={{
             label: "Back to Content",
             onClick: () => router.push('/content')
