@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: hsl(345, 65%, 25%);
+  --color-primary-light: hsl(345, 55%, 40%);
+  --color-primary-dark: hsl(345, 70%, 15%);
+  --color-accent: hsl(42, 78%, 55%);
+  --color-background: hsl(220, 20%, 8%);
+  --color-card: hsl(220, 18%, 12%);
+  --color-surface: hsl(220, 16%, 16%);
+  --color-text: hsl(220, 10%, 92%);
+  --color-text-secondary: hsl(220, 10%, 60%);
+  --color-success: hsl(142, 60%, 40%);
+  --color-warning: hsl(38, 90%, 50%);
+  --color-error: hsl(0, 72%, 50%);
+  --color-border: hsl(220, 15%, 20%);
+  
+  --font-heading: var(--font-playfair);
+  --font-body: var(--font-inter);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border);
+}
+
+/* Selection */
+::selection {
+  background: var(--color-primary-light);
+  color: white;
+}
+
+/* Skeleton Animation */
+@keyframes skeleton-loading {
+  0% { background-color: var(--color-surface); }
+  50% { background-color: var(--color-border); }
+  100% { background-color: var(--color-surface); }
+}
+
+.animate-skeleton {
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
