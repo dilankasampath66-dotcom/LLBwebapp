@@ -10,6 +10,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  [key: string]: any;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
