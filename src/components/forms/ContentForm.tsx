@@ -6,10 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { Check, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
+import Textarea from '@/components/ui/Textarea';
 import { useToast } from '@/hooks/useToast';
 import { createContentSchema } from '@/lib/validations/content';
 import DocumentUrlList from './DocumentUrlList';
@@ -25,156 +25,129 @@ interface ContentFormProps {
 }
 
 export default function ContentForm({ mode, initialData, onSuccess }: ContentFormProps) {
-  const { toast } = useToast();
   const [subjects, setSubjects] = useState<any[]>([]);
-  const [sessions, setSessions] = useState<any[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [savingAs, setSavingAs] = useState<'DRAFT' | 'PENDING_REVIEW' | null>(null);
-
-  const defaultValues: Partial<ContentFormValues> = {
-    level: initialData?.level || 3,
-    subjectId: initialData?.subjectId || '',
-    sessionName: initialData?.sessionName || '',
-    videoUrl: initialData?.videoUrl || '',
-    description: initialData?.description || '',
-    documentUrls: initialData?.documentUrls || [],
-    status: initialData?.status || 'DRAFT',
-  };
+  const [existingSessions, setExistingSessions] = useState<string[]>([]);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
+  const [isVideoValid, setIsVideoValid] = useState<boolean | null>(null);
+  const { addToast } = useToast();
 
   const {
     register,
-    control,
     handleSubmit,
+    control,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ContentFormValues>({
     resolver: zodResolver(createContentSchema),
-    defaultValues,
+    defaultValues: initialData || {
+      level: 3,
+      subjectId: '',
+      sessionName: '',
+      description: '',
+      videoUrl: '',
+      documentUrls: [],
+      documentLabels: [],
+    },
   });
 
   const level = watch('level');
-  const subjectId = watch('subjectId');
   const videoUrl = watch('videoUrl');
-
-  const isValidYouTubeUrl = videoUrl ? youtubeUrlRegex.test(videoUrl) : false;
-  const youtubeId = isValidYouTubeUrl ? extractYouTubeId(videoUrl) : null;
-  const thumbnailUrl = youtubeId ? getYouTubeThumbnail(youtubeId) : null;
 
   useEffect(() => {
     if (level) {
-      // Fetch subjects for level
       fetch(`/api/subjects?level=${level}`)
         .then((res) => res.json())
-        .then((data) => setSubjects(data))
+        .then((data) => {
+          setSubjects(data.subjects || []);
+        })
         .catch(() => setSubjects([]));
     }
   }, [level]);
 
   useEffect(() => {
-    if (level && subjectId) {
-      // Fetch existing sessions for this subject/level to help autocomplete
-      // This is a placeholder since we don't have a specific endpoint yet
-      // In reality we'd fetch distinct session names
-      setSessions([]);
+    if (videoUrl && youtubeUrlRegex.test(videoUrl)) {
+      setIsVideoValid(true);
+      const thumbnail = getYouTubeThumbnail(videoUrl);
+      setVideoPreviewUrl(thumbnail);
+    } else if (videoUrl) {
+      setIsVideoValid(false);
+      setVideoPreviewUrl(null);
+    } else {
+      setIsVideoValid(null);
+      setVideoPreviewUrl(null);
     }
-  }, [level, subjectId]);
+  }, [videoUrl]);
 
-  const onSubmit = async (data: ContentFormValues, status: 'DRAFT' | 'PENDING_REVIEW') => {
-    setIsSubmitting(true);
-    setSavingAs(status);
-    
+  const onSubmitForm = async (data: ContentFormValues, status: 'DRAFT' | 'PENDING_REVIEW') => {
     try {
       const payload = { ...data, status };
       const url = mode === 'create' ? '/api/content' : `/api/content/${initialData.id}`;
-      const method = mode === 'create' ? 'POST' : 'PUT';
+      const method = mode === 'create' ? 'POST' : 'PATCH';
 
       const res = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
-        throw new Error('Failed to save content');
+        const err = await res.json();
+        addToast(err.message || 'Failed to save content', 'error');
+        return;
       }
 
-      toast({
-        title: 'Success',
-        description: `Content ${status === 'DRAFT' ? 'saved as draft' : 'submitted for review'}.`,
-        variant: 'success',
-      });
-
+      addToast(
+        status === 'DRAFT' ? 'Saved as draft!' : 'Submitted for review!',
+        'success'
+      );
       if (onSuccess) onSuccess();
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to save content. Please try again.',
-        variant: 'error',
-      });
-    } finally {
-      setIsSubmitting(false);
-      setSavingAs(null);
+      addToast('An unexpected error occurred', 'error');
     }
   };
 
   return (
-    <form className="space-y-8 bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-sm">
-      <div className="space-y-6">
-        
-        {/* Level Selection */}
-        <div>
-          <label className="block text-sm font-medium text-zinc-300 mb-2">Level</label>
-          <div className="flex gap-2">
-            {[3, 4, 5, 6].map((l) => (
-              <button
-                key={l}
-                type="button"
-                onClick={() => setValue('level', l, { shouldValidate: true })}
-                className={cn(
-                  'px-6 py-2 rounded-md font-medium text-sm transition-colors',
-                  level === l 
-                    ? 'bg-maroon-700 text-white shadow-md' 
-                    : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
-                )}
-              >
-                Level {l}
-              </button>
-            ))}
-          </div>
-          {errors.level && <p className="mt-1 text-xs text-red-500">{errors.level.message}</p>}
+    <form className="space-y-6 max-w-4xl mx-auto">
+      {/* Level Selection */}
+      <div>
+        <label className="block text-sm font-medium text-white mb-2">Study Level</label>
+        <div className="flex bg-[hsl(220,18%,12%)] border border-[hsl(220,15%,20%)] rounded-lg p-1 max-w-md">
+          {[3, 4, 5, 6].map((l) => (
+            <button
+              key={l}
+              type="button"
+              onClick={() => setValue('level', l, { shouldValidate: true })}
+              className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
+                level === l
+                  ? 'bg-[hsl(345,65%,25%)] text-white shadow'
+                  : 'text-[hsl(220,10%,60%)] hover:text-white hover:bg-[hsl(220,16%,16%)]'
+              }`}
+            >
+              Level {l}
+            </button>
+          ))}
         </div>
+        {errors.level && <p className="mt-1 text-xs text-red-500">{errors.level.message}</p>}
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Subject Selection */}
-          <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Subject</label>
-            <Controller
-              control={control}
-              name="subjectId"
-              render={({ field }) => (
-                <Select
-                  disabled={!level || subjects.length === 0}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                >
-                  <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-200">
-                    <SelectValue placeholder="Select a subject" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-zinc-800">
-                    {subjects.map((s) => (
-                      <SelectItem key={s.id} value={s.id} className="text-zinc-200 hover:bg-zinc-800 focus:bg-zinc-800">
-                        {s.code} - {s.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.subjectId && <p className="mt-1 text-xs text-red-500">{errors.subjectId.message}</p>}
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Subject Selection */}
+        <div>
+          <Select
+            label="Subject"
+            disabled={!level || subjects.length === 0}
+            options={[
+              { label: 'Select a subject', value: '' },
+              ...subjects.map((s) => ({
+                label: s.name,
+                value: s.id,
+              })),
+            ]}
+            error={errors.subjectId?.message}
+            {...register('subjectId')}
+          />
+        </div>
 
           {/* Session Name (Combobox simulation) */}
           <div>

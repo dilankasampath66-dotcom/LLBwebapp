@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import JudgementForm from '@/components/forms/JudgementForm';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/Card';
 import { AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 

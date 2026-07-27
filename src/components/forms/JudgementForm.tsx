@@ -6,9 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { Check, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
 import { useToast } from '@/hooks/useToast';
 import { createJudgementSchema } from '@/lib/validations/judgement';
 import DocumentUrlList from './DocumentUrlList';
@@ -25,180 +25,87 @@ interface JudgementFormProps {
 }
 
 export default function JudgementForm({ mode, initialData, onSuccess }: JudgementFormProps) {
-  const { toast } = useToast();
   const [subjects, setSubjects] = useState<any[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [savingAs, setSavingAs] = useState<'DRAFT' | 'PENDING_REVIEW' | null>(null);
-
-  const defaultValues: Partial<JudgementFormValues> = {
-    caseName: initialData?.caseName || '',
-    caseNumber: initialData?.caseNumber || '',
-    summary: initialData?.summary || '',
-    level: initialData?.level || undefined,
-    subjectId: initialData?.subjectId || '',
-    videoUrl: initialData?.videoUrl || '',
-    documentUrls: initialData?.documentUrls || [],
-    status: initialData?.status || 'DRAFT',
-  };
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
+  const [isVideoValid, setIsVideoValid] = useState<boolean | null>(null);
+  const { addToast } = useToast();
 
   const {
     register,
-    control,
     handleSubmit,
+    control,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<JudgementFormValues>({
     resolver: zodResolver(createJudgementSchema),
-    defaultValues,
+    defaultValues: initialData || {
+      caseName: '',
+      caseNo: '',
+      summary: '',
+      level: undefined,
+      subjectId: '',
+      videoUrl: '',
+      documentUrls: [],
+      documentLabels: [],
+    },
   });
 
   const level = watch('level');
   const videoUrl = watch('videoUrl');
 
-  const isValidYouTubeUrl = videoUrl ? youtubeUrlRegex.test(videoUrl) : false;
-  const youtubeId = isValidYouTubeUrl ? extractYouTubeId(videoUrl) : null;
-  const thumbnailUrl = youtubeId ? getYouTubeThumbnail(youtubeId) : null;
-
   useEffect(() => {
     if (level) {
       fetch(`/api/subjects?level=${level}`)
         .then((res) => res.json())
-        .then((data) => setSubjects(data))
+        .then((data) => setSubjects(data.subjects || []))
         .catch(() => setSubjects([]));
     }
   }, [level]);
 
-  const onSubmit = async (data: JudgementFormValues, status: 'DRAFT' | 'PENDING_REVIEW') => {
-    setIsSubmitting(true);
-    setSavingAs(status);
-    
+  useEffect(() => {
+    if (videoUrl && youtubeUrlRegex.test(videoUrl)) {
+      setIsVideoValid(true);
+      const thumbnail = getYouTubeThumbnail(videoUrl);
+      setVideoPreviewUrl(thumbnail);
+    } else if (videoUrl) {
+      setIsVideoValid(false);
+      setVideoPreviewUrl(null);
+    } else {
+      setIsVideoValid(null);
+      setVideoPreviewUrl(null);
+    }
+  }, [videoUrl]);
+
+  const onSubmitForm = async (data: JudgementFormValues, status: 'DRAFT' | 'PENDING_REVIEW') => {
     try {
       const payload = { ...data, status };
       const url = mode === 'create' ? '/api/judgements' : `/api/judgements/${initialData.id}`;
-      const method = mode === 'create' ? 'POST' : 'PUT';
+      const method = mode === 'create' ? 'POST' : 'PATCH';
 
       const res = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
-        throw new Error('Failed to save judgement');
+        const err = await res.json();
+        addToast(err.message || 'Failed to save judgement', 'error');
+        return;
       }
 
-      toast({
-        title: 'Success',
-        description: `Judgement ${status === 'DRAFT' ? 'saved as draft' : 'submitted for review'}.`,
-        variant: 'success',
-      });
-
+      addToast(
+        status === 'DRAFT' ? 'Saved as draft!' : 'Submitted for review!',
+        'success'
+      );
       if (onSuccess) onSuccess();
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to save judgement. Please try again.',
-        variant: 'error',
-      });
-    } finally {
-      setIsSubmitting(false);
-      setSavingAs(null);
+      addToast('An unexpected error occurred', 'error');
     }
   };
 
   return (
-    <form className="space-y-8 bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-sm">
-      <div className="space-y-6">
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Case Name */}
-          <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Case Name <span className="text-red-500">*</span></label>
-            <Input 
-              {...register('caseName')} 
-              placeholder="e.g. Donoghue v Stevenson" 
-              className="bg-zinc-950 border-zinc-800 text-zinc-200"
-            />
-            {errors.caseName && <p className="mt-1 text-xs text-red-500">{errors.caseName.message}</p>}
-          </div>
-
-          {/* Case Number */}
-          <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Case Number <span className="text-red-500">*</span></label>
-            <Input 
-              {...register('caseNumber')} 
-              placeholder="e.g. [1932] AC 562" 
-              className="bg-zinc-950 border-zinc-800 text-zinc-200"
-            />
-            {errors.caseNumber && <p className="mt-1 text-xs text-red-500">{errors.caseNumber.message}</p>}
-          </div>
-        </div>
-
-        {/* Level & Subject (Optional) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Related Level (Optional)</label>
-            <div className="flex gap-2">
-              {[3, 4, 5, 6].map((l) => (
-                <button
-                  key={l}
-                  type="button"
-                  onClick={() => {
-                    if (level === l) {
-                      setValue('level', undefined);
-                      setValue('subjectId', undefined);
-                    } else {
-                      setValue('level', l as any);
-                    }
-                  }}
-                  className={cn(
-                    'px-4 py-2 rounded-md font-medium text-sm transition-colors',
-                    level === l 
-                      ? 'bg-zinc-700 text-white border border-zinc-600' 
-                      : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 border border-transparent'
-                  )}
-                >
-                  L{l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Related Subject (Optional)</label>
-            <Controller
-              control={control}
-              name="subjectId"
-              render={({ field }) => (
-                <Select
-                  disabled={!level || subjects.length === 0}
-                  value={field.value || ''}
-                  onValueChange={(val) => field.onChange(val || undefined)}
-                >
-                  <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-200">
-                    <SelectValue placeholder="Select a subject" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-zinc-800">
-                    {subjects.map((s) => (
-                      <SelectItem key={s.id} value={s.id} className="text-zinc-200 hover:bg-zinc-800 focus:bg-zinc-800">
-                        {s.code} - {s.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </div>
-        </div>
-
-        {/* Summary (Rich Text) */}
-        <div>
-          <label className="block text-sm font-medium text-zinc-300 mb-2">Case Summary <span className="text-red-500">*</span></label>
-          <Controller
-            control={control}
             name="summary"
             render={({ field }) => (
               <RichTextEditor
