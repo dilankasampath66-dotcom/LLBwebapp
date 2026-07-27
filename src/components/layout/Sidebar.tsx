@@ -117,3 +117,5 @@ export function Sidebar({ items }: SidebarProps) {
     </>
   );
 }
+
+export default Sidebar;
