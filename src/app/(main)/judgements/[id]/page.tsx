@@ -54,11 +54,12 @@ export default function JudgementDetailPage() {
           icon={<Scale className="w-12 h-12" />}
           title="Judgement Not Found"
           description={error || "The landmark judgement you're looking for doesn't exist or has been removed."}
-          {/* @ts-ignore */}
-          action={{
-            label: "Back to Judgements",
-            onClick: () => router.push('/judgements')
-          }}
+          action={
+            {
+              label: "Back to Judgements",
+              onClick: () => router.push('/judgements')
+            } as any
+          }
         />
       </div>
     );
