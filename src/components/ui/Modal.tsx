@@ -12,7 +12,7 @@ export interface ModalProps {
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 }
 
-export default function Modal({ isOpen, onClose, title, children, footer, maxWidth = 'md' }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, footer, maxWidth = 'md' }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -85,3 +85,5 @@ export default function Modal({ isOpen, onClose, title, children, footer, maxWid
     </AnimatePresence>
   );
 }
+
+export default Modal;

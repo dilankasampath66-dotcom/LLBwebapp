@@ -9,7 +9,7 @@ interface ToastProps {
   onClose: () => void;
 }
 
-export default function Toast({ toast, onClose }: ToastProps) {
+export function Toast({ toast, onClose }: ToastProps) {
   const { message, type } = toast;
 
   const typeStyles = {
@@ -61,3 +61,5 @@ export default function Toast({ toast, onClose }: ToastProps) {
     </AnimatePresence>
   );
 }
+
+export default Toast;

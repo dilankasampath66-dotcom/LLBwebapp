@@ -5,7 +5,7 @@ export interface SkeletonProps {
   className?: string;
 }
 
-export default function Skeleton({ variant = 'text', className = '' }: SkeletonProps) {
+export function Skeleton({ variant = 'text', className = '' }: SkeletonProps) {
   const baseClasses = 'animate-skeleton rounded-md';
   
   const variants = {
@@ -17,3 +17,5 @@ export default function Skeleton({ variant = 'text', className = '' }: SkeletonP
 
   return <div className={`${baseClasses} ${variants[variant]} ${className}`} />;
 }
+
+export default Skeleton;

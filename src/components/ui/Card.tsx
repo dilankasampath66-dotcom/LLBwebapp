@@ -8,7 +8,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   isClickable?: boolean;
 }
 
-export default function Card({
+export function Card({
   children,
   padding = 'md',
   isClickable = false,
@@ -61,3 +61,5 @@ export function CardContent({ children, className = '' }: { children: React.Reac
 export function CardFooter({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return <div className={`flex items-center pt-4 ${className}`}>{children}</div>;
 }
+
+export default Card;

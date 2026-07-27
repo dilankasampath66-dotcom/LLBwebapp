@@ -7,7 +7,7 @@ export interface AvatarProps {
   className?: string;
 }
 
-export default function Avatar({ name, size = 'md', imageUrl, className = '' }: AvatarProps) {
+export function Avatar({ name, size = 'md', imageUrl, className = '' }: AvatarProps) {
   const getInitials = (n: string) => {
     return n
       .split(' ')
@@ -47,3 +47,5 @@ export default function Avatar({ name, size = 'md', imageUrl, className = '' }: 
     </div>
   );
 }
+
+export default Avatar;

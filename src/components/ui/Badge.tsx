@@ -7,7 +7,7 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   status?: 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED';
 }
 
-export default function Badge({ variant = 'default', status, className = '', children, ...props }: BadgeProps) {
+export function Badge({ variant = 'default', status, className = '', children, ...props }: BadgeProps) {
   let mappedVariant = variant;
 
   if (status) {
@@ -36,3 +36,5 @@ export default function Badge({ variant = 'default', status, className = '', chi
     </span>
   );
 }
+
+export default Badge;

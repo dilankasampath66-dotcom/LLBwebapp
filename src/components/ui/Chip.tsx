@@ -10,7 +10,7 @@ export interface ChipProps {
   className?: string;
 }
 
-export default function Chip({ label, isActive = false, onClick, className = '' }: ChipProps) {
+export function Chip({ label, isActive = false, onClick, className = '' }: ChipProps) {
   return (
     <motion.button
       whileHover={{ scale: 1.05 }}
@@ -31,3 +31,5 @@ export default function Chip({ label, isActive = false, onClick, className = '' 
     </motion.button>
   );
 }
+
+export default Chip;
