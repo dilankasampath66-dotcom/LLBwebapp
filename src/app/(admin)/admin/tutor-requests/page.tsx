@@ -38,7 +38,7 @@ export default function TutorRequestsPage() {
         setRequests(data);
       }
     } catch (error) {
-      toast({ title: 'Error', message: 'Failed to fetch requests', type: 'error' });
+      toast('Failed to fetch requests', 'error');
     } finally {
       setLoading(false);
     }
@@ -59,16 +59,15 @@ export default function TutorRequestsPage() {
 
       if (res.ok) {
         setRequests((prev) => prev.filter((r) => r.id !== id));
-        toast({
-          title: decision === 'approve' ? 'Approved' : 'Rejected',
-          message: `Tutor application ${decision === 'approve' ? 'approved' : 'rejected'}.`,
-          type: decision === 'approve' ? 'success' : 'info',
-        });
+        toast(
+          `Tutor application ${decision === 'approve' ? 'approved' : 'rejected'}.`,
+          decision === 'approve' ? 'success' : 'info'
+        );
       } else {
         throw new Error('Failed to process request');
       }
     } catch (error) {
-      toast({ title: 'Error', message: 'Failed to process request', type: 'error' });
+      toast('Failed to process request', 'error');
     } finally {
       setProcessingId(null);
       if (decision === 'reject') {
