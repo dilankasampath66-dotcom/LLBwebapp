@@ -1,14 +1,20 @@
 import React from 'react';
 
 export interface AvatarProps {
-  name: string;
+  name?: string;
   size?: 'sm' | 'md' | 'lg';
   imageUrl?: string;
+  src?: string;
+  fallback?: string;
   className?: string;
 }
 
-export function Avatar({ name, size = 'md', imageUrl, className = '' }: AvatarProps) {
+export function Avatar({ name = '', size = 'md', imageUrl, src, fallback, className = '' }: AvatarProps) {
+  const displayName = name || fallback || '?';
+  const imgUrl = imageUrl || src;
+
   const getInitials = (n: string) => {
+    if (!n) return '?';
     return n
       .split(' ')
       .map((part) => part[0])
@@ -32,17 +38,17 @@ export function Avatar({ name, size = 'md', imageUrl, className = '' }: AvatarPr
     lg: 'w-14 h-14 text-base',
   };
 
-  const bgColor = stringToColor(name);
+  const bgColor = stringToColor(displayName);
 
   return (
     <div
       className={`relative inline-flex items-center justify-center rounded-full overflow-hidden text-white font-medium ${sizes[size]} ${className}`}
-      style={{ backgroundColor: imageUrl ? 'transparent' : bgColor }}
+      style={{ backgroundColor: imgUrl ? 'transparent' : bgColor }}
     >
-      {imageUrl ? (
-        <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
+      {imgUrl ? (
+        <img src={imgUrl} alt={displayName} className="w-full h-full object-cover" />
       ) : (
-        <span>{getInitials(name)}</span>
+        <span>{getInitials(displayName)}</span>
       )}
     </div>
   );

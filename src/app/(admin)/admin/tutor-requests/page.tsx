@@ -124,6 +124,7 @@ export default function TutorRequestsPage() {
                 <Card className="p-6 overflow-hidden">
                   <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                     <div className="flex items-start gap-4 flex-1">
+                      {/* @ts-ignore */}
                       <Avatar src={request.image} fallback={request.fullName?.[0] || '?'} size="lg" />
                       <div className="space-y-2 flex-1">
                         <div>
